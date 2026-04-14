@@ -1,16 +1,10 @@
-const defaultPosts: PostSummary[] = [
-  { id: 1, title: "첫 번째 글", authorName: "admin" },
-  { id: 2, title: "두 번째 글", authorName: "guest" },
-  { id: 3, title: "세 번째 글", authorName: "test" },
-];
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { getPosts } from "../api/posts";
 import type { PostSummary } from "../api/types";
 
 export default function PostListPage() {
-  const [posts, setPosts] = useState<PostSummary[]>(defaultPosts);
+  const [posts, setPosts] = useState<PostSummary[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
@@ -29,7 +23,7 @@ export default function PostListPage() {
 
         const message =
           err instanceof Error ? err.message : "게시글을 불러오지 못했습니다.";
-        // setError(message);
+        setError(message);
       } finally {
         if (mounted) {
           setIsLoading(false);
