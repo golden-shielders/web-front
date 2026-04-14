@@ -65,3 +65,38 @@ export async function request<T>(
 
   return data as T;
 }
+
+export async function downloadFile(
+  path: string,
+  suggestedFilename?: string
+): Promise<void> {
+  const token = getAccessToken();
+
+  const headers = new Headers();
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error("파일 다운로드에 실패했습니다.");
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = suggestedFilename || "download";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.URL.revokeObjectURL(url);
+}

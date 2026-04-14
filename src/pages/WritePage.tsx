@@ -14,7 +14,7 @@ export default function WritePage() {
     title: "",
     content: "",
   });
-
+  const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -29,13 +29,21 @@ export default function WritePage() {
     }));
   }
 
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>): void {
+    const selectedFiles = event.target.files
+      ? Array.from(event.target.files)
+      : [];
+
+    setFiles(selectedFiles);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);
 
     try {
-      const createdPost = await createPost(form);
+      const createdPost = await createPost(form, files);
       navigate(`/posts/${createdPost.id}`);
     } catch (err: unknown) {
       const message =
@@ -61,6 +69,7 @@ export default function WritePage() {
           value={form.title}
           onChange={handleChange}
         />
+
         <textarea
           name="content"
           rows={10}
@@ -68,6 +77,19 @@ export default function WritePage() {
           value={form.content}
           onChange={handleChange}
         />
+
+        <input type="file" multiple onChange={handleFileChange} />
+
+        {files.length > 0 && (
+          <ul>
+            {files.map((file) => (
+              <li key={`${file.name}-${file.size}`}>
+                {file.name} ({file.size} bytes)
+              </li>
+            ))}
+          </ul>
+        )}
+
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "등록 중..." : "등록"}
         </button>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { getPostById } from "../api/posts";
+import { downloadAttachment, getPostById } from "../api/posts";
 import type { PostDetail } from "../api/types";
 
 export default function PostDetailPage() {
@@ -9,6 +9,7 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -46,6 +47,22 @@ export default function PostDetailPage() {
     };
   }, [postId]);
 
+  async function handleDownload(
+    attachmentId: number,
+    originalFilename: string
+  ): Promise<void> {
+    try {
+      setDownloadingId(attachmentId);
+      await downloadAttachment(attachmentId, originalFilename);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "다운로드에 실패했습니다.";
+      alert(message);
+    } finally {
+      setDownloadingId(null);
+    }
+  }
+
   if (isLoading) {
     return <p>로딩 중...</p>;
   }
@@ -67,6 +84,33 @@ export default function PostDetailPage() {
         <p>작성자: {post.authorName}</p>
         <hr />
         <p>{post.content}</p>
+
+        <h3>첨부파일</h3>
+        {post.attachments.length === 0 ? (
+          <p>첨부파일이 없습니다.</p>
+        ) : (
+          <ul>
+            {post.attachments.map((attachment) => (
+              <li key={attachment.id}>
+                {attachment.originalFilename} ({attachment.size} bytes){" "}
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleDownload(
+                      attachment.id,
+                      attachment.originalFilename
+                    )
+                  }
+                  disabled={downloadingId === attachment.id}
+                >
+                  {downloadingId === attachment.id
+                    ? "다운로드 중..."
+                    : "다운로드"}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

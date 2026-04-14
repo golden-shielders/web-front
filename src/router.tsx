@@ -18,13 +18,13 @@ export const router = createBrowserRouter([
       { path: "login", Component: LoginPage },
       { path: "posts", Component: PostListPage },
       { path: "posts/:postId", Component: PostDetailPage },
-
       {
         Component: ProtectedRoute,
         children: [
           { path: "write", Component: WritePage },
         ],
       },
+      { path: "write", Component: WritePage },
       { path: "*", Component: NotFoundPage },
     ],
   },
