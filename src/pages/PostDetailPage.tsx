@@ -12,7 +12,6 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   
   useEffect(() => {
@@ -52,18 +51,15 @@ export default function PostDetailPage() {
   }, [postId]);
 
   async function handleDownload(
-    attachmentId: number,
-    originalFilename: string
+    fullPath: string,
+    originalName: string
   ): Promise<void> {
     try {
-      setDownloadingId(attachmentId);
-      await downloadAttachment(attachmentId, originalFilename);
+      await downloadAttachment(fullPath, originalName);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "다운로드에 실패했습니다.";
       alert(message);
-    } finally {
-      setDownloadingId(null);
     }
   }
 
@@ -122,32 +118,29 @@ export default function PostDetailPage() {
           </div>
         )}
 
-        {/* <h3>첨부파일</h3>
-        {post.attachments.length === 0 ? (
-          <p>첨부파일이 없습니다.</p>
-        ) : (
-          <ul>
-            {post.attachments.map((attachment) => (
-              <li key={attachment.id}>
-                {attachment.originalFilename}{" "}
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleDownload(
-                      attachment.id,
-                      attachment.originalFilename
-                    )
-                  }
-                  disabled={downloadingId === attachment.id}
-                >
-                  {downloadingId === attachment.id
-                    ? "다운로드 중..."
-                    : "다운로드"}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )} */}
+        {post.attachments.length > 0 && (
+          <>
+            <h3>첨부파일</h3>
+            <ul>
+              {post.attachments.map((attachment) => (
+                <li key={attachment.id}>
+                  {attachment.originalName}{" "}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleDownload(
+                        attachment.fullPath,
+                        attachment.originalName
+                      )
+                    }
+                  >
+                    다운로드
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
     </div>
   );

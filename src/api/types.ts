@@ -24,8 +24,8 @@ export interface PostDetail {
 
 export interface Attachment {
   id: number;
-  originalFilename: string;
-  downloadUrl?: string;
+  originalName: string;
+  fullPath: string;
 }
 
 export interface CreatePostRequest {

@@ -43,8 +43,8 @@ export default function WritePage() {
     setIsSubmitting(true);
 
     try {
-      const createdPost = await createPost(form, files);
-      navigate(`/posts/${createdPost.id}`);
+      const postId = await createPost(form, files);
+      navigate(`/posts/${postId}`);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "게시글 등록에 실패했습니다.";

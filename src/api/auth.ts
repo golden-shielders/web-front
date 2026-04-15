@@ -79,19 +79,6 @@ export function isTokenExpired(token: string): boolean {
   return payload.exp < now;
 }
 
-// export function getValidUserFromToken(): User | null {
-//   const token = getAccessToken();
-
-//   if (!token) return null;
-
-//   if (isTokenExpired(token)) {
-//     clearAccessToken();
-//     return null;
-//   }
-
-//   return getUserFromToken();
-// }
-
 export function getValidUserFromStorage(): User | null {
   const token = getAccessToken();
 

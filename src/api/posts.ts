@@ -7,7 +7,8 @@ import type {
 } from "./types";
 
 export async function getPosts(): Promise<PostSummary[]> {
-  return request<PostSummary[]>("/posts");
+  const response = await request<PostSummary[]>("/posts");
+  return response;
 }
 
 export async function getPostById(postId: string | number): Promise<PostDetail> {
@@ -17,7 +18,7 @@ export async function getPostById(postId: string | number): Promise<PostDetail> 
 export async function createPost(
   data: CreatePostRequest,
   files: File[]
-): Promise<PostDetail> {
+): Promise<number> {
   const formData = new FormData();
 
   formData.append("title", data.title);
@@ -27,12 +28,11 @@ export async function createPost(
     formData.append("files", file);
   });
 
-  return request<PostDetail>("/posts", {
+  return request<number>("/posts", {
     method: "POST",
     body: formData,
   });
 }
-
 
 export async function updatePost(
   postId: string | number,
@@ -54,8 +54,8 @@ export async function deletePost(postId: string | number): Promise<void> {
 }
 
 export async function downloadAttachment(
-  attachmentId: string | number,
-  originalFilename: string
+  fullPath: string,
+  originalName: string,
 ): Promise<void> {
-  await downloadFile(`/attachments/${attachmentId}/download`, originalFilename);
+  await downloadFile(`/file?filePath=${fullPath}`, originalName);
 }

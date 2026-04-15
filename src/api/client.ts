@@ -66,7 +66,7 @@ export async function request<T>(
 
 export async function downloadFile(
   path: string,
-  suggestedFilename?: string
+  originalName: string,
 ): Promise<void> {
   const token = getAccessToken();
 
@@ -90,7 +90,7 @@ export async function downloadFile(
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = suggestedFilename || "download";
+  link.download = originalName || "download";
 
   document.body.appendChild(link);
   link.click();
