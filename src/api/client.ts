@@ -1,8 +1,6 @@
-const BASE_URL = "http://localhost:8080/api";
+import { getAccessToken } from "./auth";
 
-function getAccessToken(): string | null {
-  return localStorage.getItem("accessToken");
-}
+const BASE_URL = "http://192.168.0.34:8080/api/v1";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: BodyInit | Record<string, unknown> | null;

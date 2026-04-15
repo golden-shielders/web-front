@@ -43,7 +43,7 @@ export default function LoginPage() {
     try {
       const data = await login(form);
       saveAccessToken(data.accessToken);
-      navigate(redirectPath, { replace: true });
+      window.location.href = redirectPath;
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "로그인에 실패했습니다.";

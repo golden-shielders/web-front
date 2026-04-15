@@ -24,7 +24,6 @@ export const router = createBrowserRouter([
           { path: "write", Component: WritePage },
         ],
       },
-      { path: "write", Component: WritePage },
       { path: "*", Component: NotFoundPage },
     ],
   },

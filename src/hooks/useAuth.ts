@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { clearAccessToken, getMyInfo } from "../api/auth";
+import { clearAccessToken, getMyInfo, getValidUserFromToken } from "../api/auth";
 import type { User } from "../api/types";
 
 interface UseAuthResult {
@@ -11,43 +11,61 @@ interface UseAuthResult {
 export default function useAuth(): UseAuthResult {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    let mounted = true;
-
-    async function fetchMe() {
-      try {
-        const data = await getMyInfo();
-
-        if (!mounted) return;
-
-        setUser(data);
-        setIsAuthenticated(true);
-      } catch {
-        clearAccessToken();
-
-        if (!mounted) return;
-
-        setUser(null);
-        setIsAuthenticated(false);
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void fetchMe();
-
-    return () => {
-      mounted = false;
-    };
+    const parsedUser = getValidUserFromToken();
+    setUser(parsedUser);
+    setIsLoading(false);
   }, []);
 
   return {
     user,
     isLoading,
-    isAuthenticated,
+    isAuthenticated: user !== null,
   };
 }
+
+// export default function useAuth(): UseAuthResult {
+//   const [user, setUser] = useState<User | null>(null);
+//   const [isLoading, setIsLoading] = useState<boolean>(true);
+//   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+//   useEffect(() => {
+//     let mounted = true;
+
+//     async function fetchMe() {
+//       try {
+//         const data = await getMyInfo();
+//         console.log(data)
+
+//         if (!mounted) return;
+
+//         setUser(data);
+//         setIsAuthenticated(true);
+//       } catch {
+//         clearAccessToken();
+
+//         if (!mounted) return;
+
+//         setUser(null);
+//         setIsAuthenticated(false);
+//       } finally {
+//         if (mounted) {
+//           setIsLoading(false);
+//         }
+//       }
+//     }
+
+//     void fetchMe();
+
+//     return () => {
+//       mounted = false;
+//     };
+//   }, []);
+
+//   return {
+//     user,
+//     isLoading,
+//     isAuthenticated,
+//   };
+// }

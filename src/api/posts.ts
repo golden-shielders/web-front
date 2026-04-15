@@ -33,6 +33,7 @@ export async function createPost(
   });
 }
 
+
 export async function updatePost(
   postId: string | number,
   { title, content }: UpdatePostRequest
