@@ -9,11 +9,13 @@ export interface LoginRequest {
 
 type JwtPayloadWithRole = JwtPayload  & Record<"role", string>
 
+const ACCESS_TOKEN_KEY = "accessToken";
+
 export async function login({
   username,
   password,
 }: LoginRequest): Promise<LoginResponse> {
-  const res = await request<string>("/login", {
+  const token = await request<string>("/login", {
     method: "POST",
     body: {
       userName: username,
@@ -21,10 +23,10 @@ export async function login({
     },
   });
 
-  const payload = decodeAccessToken(res)
+  const payload = decodeAccessToken(token)
 
   return {
-    accessToken: res,
+    accessToken: token,
     user: {
       username: payload?.sub!,
       role: payload?.role!
@@ -37,15 +39,15 @@ export async function getMyInfo(): Promise<User> {
 }
 
 export function saveAccessToken(token: string): void {
-  localStorage.setItem("accessToken", token);
+  localStorage.setItem(ACCESS_TOKEN_KEY, token);
 }
 
 export function getAccessToken(): string | null {
-  return localStorage.getItem("accessToken");
+  return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
 export function clearAccessToken(): void {
-  localStorage.removeItem("accessToken");
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
 }
 
 export function decodeAccessToken(token: string): JwtPayloadWithRole | null {
@@ -57,11 +59,7 @@ export function decodeAccessToken(token: string): JwtPayloadWithRole | null {
   }
 }
 
-export function getUserFromToken(): User | null {
-  const token = getAccessToken();
-
-  if (!token) return null;
-
+export function getUserFromToken(token: string): User | null {
   const payload = decodeAccessToken(token);
 
   if (!payload) return null;
@@ -81,7 +79,20 @@ export function isTokenExpired(token: string): boolean {
   return payload.exp < now;
 }
 
-export function getValidUserFromToken(): User | null {
+// export function getValidUserFromToken(): User | null {
+//   const token = getAccessToken();
+
+//   if (!token) return null;
+
+//   if (isTokenExpired(token)) {
+//     clearAccessToken();
+//     return null;
+//   }
+
+//   return getUserFromToken();
+// }
+
+export function getValidUserFromStorage(): User | null {
   const token = getAccessToken();
 
   if (!token) return null;
@@ -91,5 +102,5 @@ export function getValidUserFromToken(): User | null {
     return null;
   }
 
-  return getUserFromToken();
+  return getUserFromToken(token);
 }

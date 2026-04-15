@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { downloadAttachment, getPostById } from "../api/posts";
+import { useNavigate, useParams } from "react-router";
+import { deletePost, downloadAttachment, getPostById } from "../api/posts";
 import type { PostDetail } from "../api/types";
+import useAuth from "../hooks/useAuth";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
-
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+  
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
-
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  
   useEffect(() => {
     let mounted = true;
 
@@ -63,6 +67,25 @@ export default function PostDetailPage() {
     }
   }
 
+    async function handleDelete(): Promise<void> {
+    if (!postId) return;
+
+    const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?");
+    if (!confirmed) return;
+
+    try {
+      setIsDeleting(true);
+      await deletePost(postId);
+      navigate("/posts", { replace: true });
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "게시글 삭제에 실패했습니다.";
+      alert(message);
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   if (isLoading) {
     return <p>로딩 중...</p>;
   }
@@ -75,6 +98,8 @@ export default function PostDetailPage() {
     return <p>게시글이 없습니다.</p>;
   }
 
+  const isAuthor = isAuthenticated && user?.username === post.authorName;
+
   return (
     <div>
       <h1>게시글 상세</h1>
@@ -85,14 +110,26 @@ export default function PostDetailPage() {
         <hr />
         <p>{post.content}</p>
 
-        <h3>첨부파일</h3>
+        {isAuthor && (
+          <div style={{ marginTop: "16px" }}>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "삭제 중..." : "삭제"}
+            </button>
+          </div>
+        )}
+
+        {/* <h3>첨부파일</h3>
         {post.attachments.length === 0 ? (
           <p>첨부파일이 없습니다.</p>
         ) : (
           <ul>
             {post.attachments.map((attachment) => (
               <li key={attachment.id}>
-                {attachment.originalFilename} ({attachment.size} bytes){" "}
+                {attachment.originalFilename}{" "}
                 <button
                   type="button"
                   onClick={() =>
@@ -110,7 +147,7 @@ export default function PostDetailPage() {
               </li>
             ))}
           </ul>
-        )}
+        )} */}
       </div>
     </div>
   );

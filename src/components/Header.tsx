@@ -1,13 +1,13 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import useAuth from "../hooks/useAuth";
-import { clearAccessToken } from "../api/auth";
 
 export default function Header() {
-  const { isLoading, isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+  const { isLoading, isAuthenticated, user, logout } = useAuth();
 
   function handleLogout(): void {
-    clearAccessToken();
-    window.location.href = "/login";
+    logout();
+    navigate("/login", { replace: true });
   }
 
   return (

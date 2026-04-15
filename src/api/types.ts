@@ -25,7 +25,6 @@ export interface PostDetail {
 export interface Attachment {
   id: number;
   originalFilename: string;
-  size: number;
   downloadUrl?: string;
 }
 

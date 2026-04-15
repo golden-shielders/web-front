@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { clearAccessToken, getMyInfo, getValidUserFromToken } from "../api/auth";
-import type { User } from "../api/types";
+// import { useEffect, useState } from "react";
+// import { getValidUserFromToken } from "../api/auth";
+// import type { User } from "../api/types";
 
-interface UseAuthResult {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-}
+// interface UseAuthResult {
+//   user: User | null;
+//   isLoading: boolean;
+//   isAuthenticated: boolean;
+// }
 
-export default function useAuth(): UseAuthResult {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+// export default function useAuth(): UseAuthResult {
+//   const [user, setUser] = useState<User | null>(null);
+//   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const parsedUser = getValidUserFromToken();
-    setUser(parsedUser);
-    setIsLoading(false);
-  }, []);
+//   useEffect(() => {
+//     const parsedUser = getValidUserFromToken();
+//     setUser(parsedUser);
+//     setIsLoading(false);
+//   }, []);
 
-  return {
-    user,
-    isLoading,
-    isAuthenticated: user !== null,
-  };
-}
+//   return {
+//     user,
+//     isLoading,
+//     isAuthenticated: user !== null,
+//   };
+// }
 
 // export default function useAuth(): UseAuthResult {
 //   const [user, setUser] = useState<User | null>(null);
@@ -69,3 +69,16 @@ export default function useAuth(): UseAuthResult {
 //     isAuthenticated,
 //   };
 // }
+
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+export default function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+
+  return context;
+}
