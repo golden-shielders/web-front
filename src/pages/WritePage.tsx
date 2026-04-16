@@ -19,7 +19,7 @@ export default function WritePage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   function handleChange(
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void {
     const { name, value } = event.target;
 
@@ -37,7 +37,9 @@ export default function WritePage() {
     setFiles(selectedFiles);
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);

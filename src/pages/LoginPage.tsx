@@ -36,7 +36,9 @@ export default function LoginPage() {
     }));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);

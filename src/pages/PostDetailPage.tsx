@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { deletePost, downloadAttachment, getPostById } from "../api/posts";
 import type { PostDetail } from "../api/types";
 import useAuth from "../hooks/useAuth";
+import activateScripts from "../utils/activateScripts";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
-  
+
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  
+
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     let mounted = true;
 
@@ -50,9 +53,18 @@ export default function PostDetailPage() {
     };
   }, [postId]);
 
+  useEffect(() => {
+    if (post && contentRef.current) {
+      console.log(post.content);
+      contentRef.current.innerHTML = post.content;
+
+      activateScripts(contentRef.current);
+    }
+  }, [post]);
+
   async function handleDownload(
     fullPath: string,
-    originalName: string
+    originalName: string,
   ): Promise<void> {
     try {
       await downloadAttachment(fullPath, originalName);
@@ -63,7 +75,7 @@ export default function PostDetailPage() {
     }
   }
 
-    async function handleDelete(): Promise<void> {
+  async function handleDelete(): Promise<void> {
     if (!postId) return;
 
     const confirmed = window.confirm("정말 이 게시글을 삭제하시겠습니까?");
@@ -104,15 +116,12 @@ export default function PostDetailPage() {
         <h2>{post.title}</h2>
         <p>작성자: {post.authorName}</p>
         <hr />
-        <p>{post.content}</p>
+        {/* 취약 */}
+        <div ref={contentRef} />
 
         {isAuthor && (
           <div style={{ marginTop: "16px" }}>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
+            <button type="button" onClick={handleDelete} disabled={isDeleting}>
               {isDeleting ? "삭제 중..." : "삭제"}
             </button>
           </div>
@@ -130,7 +139,7 @@ export default function PostDetailPage() {
                     onClick={() =>
                       handleDownload(
                         attachment.fullPath,
-                        attachment.originalName
+                        attachment.originalName,
                       )
                     }
                   >

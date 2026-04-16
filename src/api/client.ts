@@ -1,6 +1,6 @@
 import { getAccessToken } from "./auth";
 
-const BASE_URL = "http://192.168.0.34:8080/api/v1";
+const BASE_URL = "BASE_URL";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: BodyInit | Record<string, unknown> | null;
@@ -8,7 +8,7 @@ type RequestOptions = Omit<RequestInit, "body"> & {
 
 export async function request<T>(
   path: string,
-  options: RequestOptions = {}
+  options: RequestOptions = {},
 ): Promise<T> {
   const token = getAccessToken();
 
@@ -22,7 +22,8 @@ export async function request<T>(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  let body: BodyInit | Record<string, unknown> | null | undefined = options.body;
+  let body: BodyInit | Record<string, unknown> | null | undefined =
+    options.body;
 
   if (
     body &&
@@ -53,10 +54,12 @@ export async function request<T>(
   if (!response.ok) {
     const message =
       typeof data === "object" && data !== null && "message" in data
-        ? String((data as { message?: unknown }).message ?? "요청에 실패했습니다.")
+        ? String(
+            (data as { message?: unknown }).message ?? "요청에 실패했습니다.",
+          )
         : typeof data === "string"
-        ? data
-        : "요청에 실패했습니다.";
+          ? data
+          : "요청에 실패했습니다.";
 
     throw new Error(message);
   }
