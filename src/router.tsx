@@ -19,9 +19,7 @@ export const router = createBrowserRouter([
       { path: "posts/:postId", Component: PostDetailPage },
       {
         Component: ProtectedRoute,
-        children: [
-          { path: "write", Component: WritePage },
-        ],
+        children: [{ path: "write", Component: WritePage }],
       },
       { path: "*", Component: NotFoundPage },
     ],

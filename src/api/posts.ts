@@ -11,13 +11,15 @@ export async function getPosts(): Promise<PostSummary[]> {
   return response;
 }
 
-export async function getPostById(postId: string | number): Promise<PostDetail> {
+export async function getPostById(
+  postId: string | number,
+): Promise<PostDetail> {
   return request<PostDetail>(`/posts/${postId}`);
 }
 
 export async function createPost(
   data: CreatePostRequest,
-  files: File[]
+  files: File[],
 ): Promise<number> {
   const formData = new FormData();
 
@@ -36,7 +38,7 @@ export async function createPost(
 
 export async function updatePost(
   postId: string | number,
-  { title, content }: UpdatePostRequest
+  { title, content }: UpdatePostRequest,
 ): Promise<PostDetail> {
   return request<PostDetail>(`/posts/${postId}`, {
     method: "PUT",

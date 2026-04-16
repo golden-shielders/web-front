@@ -7,7 +7,7 @@ export interface LoginRequest {
   password: string;
 }
 
-type JwtPayloadWithRole = JwtPayload  & Record<"role", string>
+type JwtPayloadWithRole = JwtPayload & Record<"role", string>;
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -23,15 +23,15 @@ export async function login({
     },
   });
 
-  const payload = decodeAccessToken(token)
+  const payload = decodeAccessToken(token);
 
   return {
     accessToken: token,
     user: {
       username: payload?.sub!,
-      role: payload?.role!
-    }
-  }
+      role: payload?.role!,
+    },
+  };
 }
 
 export async function getMyInfo(): Promise<User> {
@@ -53,7 +53,7 @@ export function clearAccessToken(): void {
 export function decodeAccessToken(token: string): JwtPayloadWithRole | null {
   try {
     const payload = jwtDecode<JwtPayload>(token);
-    return payload as JwtPayloadWithRole
+    return payload as JwtPayloadWithRole;
   } catch {
     return null;
   }
