@@ -11,34 +11,53 @@ export default function Header() {
   }
 
   return (
-    <header
-      style={{
-        display: "flex",
-        gap: "16px",
-        padding: "16px 24px",
-        borderBottom: "1px solid #ddd",
-        alignItems: "center",
-      }}
-    >
-      <Link to="/">홈</Link>
-      <Link to="/posts">게시판</Link>
+    <div className="site-header-wrap">
+      <header className="site-header">
+        <Link to="/" className="brand" aria-label="Sentinel Board 홈으로 이동">
+          <span className="brand__mark">SB</span>
+          <span className="brand__text">
+            <span className="brand__title">Sentinel Board</span>
+            <span className="brand__subtitle">Operations Dashboard</span>
+          </span>
+        </Link>
 
-      {isAuthenticated && <Link to="/write">글쓰기</Link>}
+        <nav className="nav-links" aria-label="주요 메뉴">
+          <Link className="nav-link" to="/">
+            Overview
+          </Link>
+          <Link className="nav-link" to="/posts">
+            Posts
+          </Link>
+          {isAuthenticated && (
+            <Link className="nav-link" to="/write">
+              Create
+            </Link>
+          )}
+        </nav>
 
-      <div style={{ marginLeft: "auto", display: "flex", gap: "12px" }}>
-        {isLoading ? (
-          <span>확인 중...</span>
-        ) : isAuthenticated ? (
-          <>
-            <span>{user?.username}님</span>
-            <button type="button" onClick={handleLogout}>
-              로그아웃
-            </button>
-          </>
-        ) : (
-          <Link to="/login">로그인</Link>
-        )}
-      </div>
-    </header>
+        <div className="header-spacer" />
+
+        <div className="user-panel">
+          {isLoading ? (
+            <span className="user-badge">
+              <span className="user-badge__dot" /> 세션 확인 중
+            </span>
+          ) : isAuthenticated ? (
+            <>
+              <span className="user-badge">
+                <span className="user-badge__dot" /> {user?.username} 계정 활성화
+              </span>
+              <button type="button" className="btn btn--ghost" onClick={handleLogout}>
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <Link className="btn btn--secondary" to="/login">
+              로그인
+            </Link>
+          )}
+        </div>
+      </header>
+    </div>
   );
 }
