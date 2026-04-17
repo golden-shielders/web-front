@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { deletePost, downloadAttachment, getPostById } from "../api/posts";
 import type { PostDetail } from "../api/types";
 import useAuth from "../hooks/useAuth";
@@ -95,62 +95,85 @@ export default function PostDetailPage() {
   }
 
   if (isLoading) {
-    return <p>로딩 중...</p>;
+    return <p className="loading-state">게시글을 불러오는 중...</p>;
   }
 
   if (error) {
-    return <p>에러: {error}</p>;
+    return <p className="error-state">에러: {error}</p>;
   }
 
   if (!post) {
-    return <p>게시글이 없습니다.</p>;
+    return <p className="empty-state">게시글이 없습니다.</p>;
   }
 
   const isAuthor = isAuthenticated && user?.username === post.authorName;
 
   return (
-    <div>
-      <h1>게시글 상세</h1>
+    <div className="page detail-shell">
+      <div className="inline-actions">
+        <Link className="btn btn--secondary" to="/posts">
+          목록으로
+        </Link>
+      </div>
 
-      <div style={{ border: "1px solid #ddd", padding: "16px" }}>
-        <h2>{post.title}</h2>
-        <p>작성자: {post.authorName}</p>
-        <hr />
-        {/* 취약 */}
-        <div ref={contentRef} />
+      <article className="glass-card post-card stack">
+        <div className="stack" style={{ gap: "10px" }}>
+          <span className="eyebrow">
+            <span className="eyebrow__dot" /> Post Overview
+          </span>
+          <h1 className="page-title">{post.title}</h1>
+          <div className="post-meta">
+            <span className="tag">작성자 {post.authorName}</span>
+            <span className="tag">Post #{post.id}</span>
+            {isAuthor && <span className="tag">작성자 권한</span>}
+          </div>
+        </div>
+
+        <hr className="divider" />
+
+        <div className="post-content" ref={contentRef} />
 
         {isAuthor && (
-          <div style={{ marginTop: "16px" }}>
-            <button type="button" onClick={handleDelete} disabled={isDeleting}>
+          <div className="inline-actions">
+            <button
+              type="button"
+              className="btn btn--danger"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
               {isDeleting ? "삭제 중..." : "삭제"}
             </button>
           </div>
         )}
+      </article>
 
-        {post.attachments.length > 0 && (
-          <>
-            <h3>첨부파일</h3>
-            <ul>
-              {post.attachments.map((attachment) => (
-                <li key={attachment.id}>
-                  {attachment.originalName}{" "}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleDownload(
-                        attachment.fullPath,
-                        attachment.originalName,
-                      )
-                    }
-                  >
-                    다운로드
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
+      {post.attachments.length > 0 && (
+        <section className="glass-card stack">
+          <div>
+            <h2 className="section-title">첨부파일</h2>
+            <p className="section-copy">게시글에 연결된 파일을 바로 다운로드할 수 있어.</p>
+          </div>
+          <ul className="file-list">
+            {post.attachments.map((attachment) => (
+              <li key={attachment.id} className="file-item">
+                <div className="file-item__name">
+                  <span className="file-item__icon">📎</span>
+                  <span className="file-name-text">{attachment.originalName}</span>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={() =>
+                    handleDownload(attachment.fullPath, attachment.originalName)
+                  }
+                >
+                  다운로드
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

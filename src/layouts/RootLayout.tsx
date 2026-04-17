@@ -3,9 +3,9 @@ import Header from "../components/Header";
 
 export default function RootLayout() {
   return (
-    <div>
+    <div className="app-shell">
       <Header />
-      <main style={{ padding: "24px", maxWidth: "960px", margin: "0 auto" }}>
+      <main className="layout-main">
         <Outlet />
       </main>
     </div>
