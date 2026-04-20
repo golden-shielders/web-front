@@ -49,7 +49,7 @@ export default function usePostPagination({
   currentItemCount,
   defaultPage = 0,
   defaultSize = 10,
-  defaultSort = "id",
+  defaultSort = "id desc",
 }: UsePostPaginationOptions): UsePostPaginationResult {
   const [searchParams, setSearchParams] = useSearchParams();
 
