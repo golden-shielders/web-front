@@ -15,7 +15,7 @@ interface GetPostsParams {
 export async function getPosts({
   page = 0,
   size = 10,
-  sort = "id",
+  sort = "id desc",
 }: GetPostsParams = {}): Promise<PostSummary[]> {
   const query = new URLSearchParams({
     page: String(page),

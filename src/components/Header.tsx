@@ -29,7 +29,7 @@ export default function Header() {
             className="nav-link"
             to={{
               pathname: "/posts",
-              search: "?page=0&size=10&sort=id",
+              search: "?page=0&size=10&sort=id desc",
             }}
           >
             Posts

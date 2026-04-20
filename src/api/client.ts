@@ -1,6 +1,6 @@
 import { getAccessToken } from "./auth";
 
-const BASE_URL = "BASE_URL";
+const BASE_URL = "http://220.88.200.203:8080/api/v1";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: BodyInit | Record<string, unknown> | null;

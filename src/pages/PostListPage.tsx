@@ -9,13 +9,21 @@ export default function PostListPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const { page, size, sort, hasPrev, hasNext, goToPrevPage, goToNextPage } =
-    usePostPagination({
-      currentItemCount: posts.length,
-      defaultPage: 0,
-      defaultSize: 10,
-      defaultSort: "id",
-    });
+  const {
+    page,
+    size,
+    sort,
+    hasPrev,
+    hasNext,
+    goToPrevPage,
+    goToNextPage,
+    setSort,
+  } = usePostPagination({
+    currentItemCount: posts.length,
+    defaultPage: 0,
+    defaultSize: 10,
+    defaultSort: "id desc",
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -74,6 +82,24 @@ export default function PostListPage() {
             </p>
           </div>
           <div className="inline-actions">
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              <span className="tag">정렬</span>
+              <select
+                className="input"
+                style={{ width: "160px", padding: "10px 12px" }}
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+              >
+                <option value="id desc">최신순</option>
+                <option value="id asc">오래된순</option>
+              </select>
+            </label>
             <span className="tag">총 {posts.length}건</span>
             <Link to="/write" className="btn btn--primary">
               새 글 작성
