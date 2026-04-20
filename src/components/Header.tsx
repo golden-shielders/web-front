@@ -25,7 +25,13 @@ export default function Header() {
           <Link className="nav-link" to="/">
             Overview
           </Link>
-          <Link className="nav-link" to="/posts">
+          <Link
+            className="nav-link"
+            to={{
+              pathname: "/posts",
+              search: "?page=0&size=10&sort=id",
+            }}
+          >
             Posts
           </Link>
           {isAuthenticated && (
@@ -45,9 +51,14 @@ export default function Header() {
           ) : isAuthenticated ? (
             <>
               <span className="user-badge">
-                <span className="user-badge__dot" /> {user?.username} 계정 활성화
+                <span className="user-badge__dot" /> {user?.username} 계정
+                활성화
               </span>
-              <button type="button" className="btn btn--ghost" onClick={handleLogout}>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={handleLogout}
+              >
                 로그아웃
               </button>
             </>
