@@ -2,18 +2,34 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { getPosts } from "../api/posts";
 import type { PostSummary } from "../api/types";
+import usePostPagination from "../hooks/usePostPagination";
 
 export default function PostListPage() {
   const [posts, setPosts] = useState<PostSummary[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
+  const { page, size, sort, hasPrev, hasNext, goToPrevPage, goToNextPage } =
+    usePostPagination({
+      currentItemCount: posts.length,
+      defaultPage: 0,
+      defaultSize: 10,
+      defaultSort: "id",
+    });
+
   useEffect(() => {
     let mounted = true;
 
     async function fetchPosts() {
       try {
-        const data = await getPosts();
+        setIsLoading(true);
+        setError("");
+
+        const data = await getPosts({
+          page,
+          size,
+          sort,
+        });
 
         if (!mounted) return;
 
@@ -36,7 +52,7 @@ export default function PostListPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [page, size, sort]);
 
   if (isLoading) {
     return <p className="loading-state">게시글 목록을 불러오는 중...</p>;
@@ -53,7 +69,8 @@ export default function PostListPage() {
           <div>
             <h1 className="page-title">게시글 관리</h1>
             <p className="section-copy">
-              등록된 게시글을 표 형태로 빠르게 확인할 수 있도록 운영 대시보드 스타일로 정리했어.
+              등록된 게시글을 표 형태로 빠르게 확인할 수 있도록 운영 대시보드
+              스타일로 정리했어.
             </p>
           </div>
           <div className="inline-actions">
@@ -95,6 +112,37 @@ export default function PostListPage() {
             </table>
           </div>
         )}
+
+        <div
+          className="pagination"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "12px",
+            marginTop: "20px",
+          }}
+        >
+          <button
+            type="button"
+            className="btn"
+            onClick={goToPrevPage}
+            disabled={!hasPrev}
+          >
+            이전
+          </button>
+
+          <span>{page + 1}</span>
+
+          <button
+            type="button"
+            className="btn"
+            onClick={goToNextPage}
+            disabled={!hasNext}
+          >
+            다음
+          </button>
+        </div>
       </section>
     </div>
   );
