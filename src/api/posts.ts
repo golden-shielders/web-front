@@ -6,9 +6,24 @@ import type {
   UpdatePostRequest,
 } from "./types";
 
-export async function getPosts(): Promise<PostSummary[]> {
-  const response = await request<PostSummary[]>("/posts");
-  return response;
+interface GetPostsParams {
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export async function getPosts({
+  page = 0,
+  size = 10,
+  sort = "id",
+}: GetPostsParams = {}): Promise<PostSummary[]> {
+  const query = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+    sort,
+  });
+
+  return request<PostSummary[]>(`/posts?${query.toString()}`);
 }
 
 export async function getPostById(

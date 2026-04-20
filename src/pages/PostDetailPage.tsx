@@ -107,6 +107,7 @@ export default function PostDetailPage() {
   }
 
   const isAuthor = isAuthenticated && user?.username === post.authorName;
+  const isAdmin = user?.role === "ADMIN";
 
   return (
     <div className="page detail-shell">
@@ -133,7 +134,7 @@ export default function PostDetailPage() {
 
         <div className="post-content" ref={contentRef} />
 
-        {isAuthor && (
+        {(isAuthor || isAdmin) && (
           <div className="inline-actions">
             <button
               type="button"
@@ -151,14 +152,18 @@ export default function PostDetailPage() {
         <section className="glass-card stack">
           <div>
             <h2 className="section-title">첨부파일</h2>
-            <p className="section-copy">게시글에 연결된 파일을 바로 다운로드할 수 있어.</p>
+            <p className="section-copy">
+              게시글에 연결된 파일을 바로 다운로드할 수 있어.
+            </p>
           </div>
           <ul className="file-list">
             {post.attachments.map((attachment) => (
               <li key={attachment.id} className="file-item">
                 <div className="file-item__name">
                   <span className="file-item__icon">📎</span>
-                  <span className="file-name-text">{attachment.originalName}</span>
+                  <span className="file-name-text">
+                    {attachment.originalName}
+                  </span>
                 </div>
                 <button
                   type="button"
